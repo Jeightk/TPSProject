@@ -19,6 +19,9 @@ def setPositions():
 def evalClosestPosition(posToStartFrom: int):
 
     lowestDistance = None
+    traveledPos = None
+    spot = None
+
     pos = positions[posToStartFrom]
 
     #cycle thru all positions given the starting position
@@ -30,24 +33,29 @@ def evalClosestPosition(posToStartFrom: int):
         if positions[x] == positions[posToStartFrom]:
             continue
         else:
-            #set second position to get ready for comparison
-            pos2 = positions[x]
-            xValuep2 = pos2['xValue']
-            yValuep2 = pos2['yValue']
+            #iterate thru positions we havnt visited
+            if positions[x]['touched'] == False:
+                #set second position to get ready for comparison
+                pos2 = positions[x]
+                xValuep2 = pos2['xValue']
+                yValuep2 = pos2['yValue']
 
-            #find distance between both pos's
-            dist = math.sqrt((xValuep2 - xValuep1)**2 + (yValuep2 - yValuep1)**2)
+                #find distance between both pos's
+                dist = math.sqrt((xValuep2 - xValuep1)**2 + (yValuep2 - yValuep1)**2)
 
 
-            #set base lowest distance(edge case of only one other position)
-            if lowestDistance == None:
-                lowestDistance = dist
-                tempd = dict(dPosition = pos2, distance = dist, spot = x)
+                #set base lowest distance(edge case of only one other position)
+                #also we update any needed values if we end up going with this position as our closest
+                #i.e our position value, lowest distance, and our position in the positions list
+                if lowestDistance == None:
+                    lowestDistance = dist
+                    traveledPos = pos2
+                    spot = x
 
-            elif lowestDistance > dist:
-                lowestDistance = dist
-                tempd = dict(dPosition = pos2, distance = dist, spot = x)
-            
+                elif lowestDistance > dist:
+                    lowestDistance = dist
+                    traveledPos = pos2
+                    spot = x
             
 
             #print(xValuep1, " compared to ", xValuep2)
@@ -57,6 +65,11 @@ def evalClosestPosition(posToStartFrom: int):
     #pos2['touched'] = True
     #tempd['dPosition'] = pos2
     #return a dictionary to have access to the distance and respective position
+
+
+    #We set the touched value to true once we have visited that position
+    traveledPos['touched']=True
+    tempd = dict(dPosition = traveledPos, distance = lowestDistance, spot = spot)
     return tempd
 
 
@@ -65,10 +78,30 @@ totalDistance = 0
 
 def recursiveGumbo(PosStart: int):
 
-    if len(positions) == 1:
+    #boolean value to check if there is any values that have not been touched
+    anyLeft = False
+
+    #a count value to be used when:  there is only one value left to open up the first position to create a hamiltonian
+    count = 0
+
+    for x in range(len(positions)):
+        if positions[x]['touched'] == False:
+                count+=1
+                #we found that there are some left, sooo we dont end the recursion
+                anyLeft = True
+
+
+    if anyLeft == False:
+        #none left so we end it
+        print("None left")
         return 0
+    
+    #if theres one value left that still needs to be 'touched' we go ahead and add our start pos so we can create that loop
+    elif count == 1:
+        #adding out original starting point back into the mix
+        positions[posToStartFrom]['touched'] = False
 
-
+    #finds position that is closest to ours, that also hasnt been 'touched' yet
     var = evalClosestPosition(PosStart)
 
     print(PosStart, " to ", var['spot'])
@@ -78,12 +111,11 @@ def recursiveGumbo(PosStart: int):
     spot = var['spot']
     print(var['distance'])
 
+    #honestly dont think i need this if statement since i no longer change positions list length, need to go back and c
     if positions[spot] == positions[len(positions)-1]:
-        positions.pop(spot)
         return recursiveGumbo(0)+var['distance']
             
     else:
-        positions.pop(spot)
         return recursiveGumbo(spot)+var['distance']
             
     
@@ -110,15 +142,16 @@ if __name__ == "__main__":
 
     print(positions)
 
-
+    #Goes ahead and sets up the first position
+    positions[posToStartFrom]['touched'] = True
     firstPosition = evalClosestPosition(posToStartFrom)
-    firstPosition['touched'] = True
     totalDistance+=firstPosition['distance']
 
+    #Display where we going to
     print(posToStartFrom, " to ", firstPosition['spot'])
 
+    #add up total distance recursively
     totalDistance+=recursiveGumbo(firstPosition['spot'])
 
-    print("Shortest Distance Brute Force : ", totalDistance)
 
-    #print(evalClosestPosition(posToStartFrom))
+    print("Shortest Distance Brute Force : ", totalDistance)
