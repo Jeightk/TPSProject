@@ -149,7 +149,7 @@ def recursiveGumbo(PosStart: int):
 if __name__ == "__main__":
     setPositions()
 
-    print(positions)
+    #print(positions)
 
     #Goes ahead and sets up the first position
     positions[posToStartFrom]['touched'] = True
