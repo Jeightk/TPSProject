@@ -1,7 +1,12 @@
 import math
 
-xArray = [87.951292, 33.466597, 91.778314, 20.526749, 9.006012, 20.032350, 77.181310]
-yArray = [2.658162, 66.682943, 53.807184, 47.633290, 81.185339, 2.761925, 31.922361]
+import util
+
+#xArray = [87.951292, 33.466597, 91.778314, 20.526749, 9.006012, 20.032350, 77.181310]
+#yArray = [2.658162, 66.682943, 53.807184, 47.633290, 81.185339, 2.761925, 31.922361]
+
+xArray = []
+yArray = []
 
 positions = []
 
@@ -10,10 +15,19 @@ posToStartFrom = 0
 
 #create each independent position variable with given data.  xArray.length == yArray.length MUST!
 def setPositions():
+    util.readFile()
+
+    xArray = util.getxArray()
+    yArray = util.getyArray()
+
+
     for x in range(len(xArray)):
         #create dictionary obj & add to position list
         pos = dict(xValue = xArray[x], yValue = yArray[x], touched = False)
         positions.append(pos)
+
+    print(xArray)
+    print(yArray)
 
 #method to find the closest position
 def evalClosestPosition(posToStartFrom: int):
@@ -111,12 +125,7 @@ def recursiveGumbo(PosStart: int):
     spot = var['spot']
     print(var['distance'])
 
-    #honestly dont think i need this if statement since i no longer change positions list length, need to go back and c
-    if positions[spot] == positions[len(positions)-1]:
-        return recursiveGumbo(0)+var['distance']
-            
-    else:
-        return recursiveGumbo(spot)+var['distance']
+    return recursiveGumbo(spot)+var['distance']
             
     
 
