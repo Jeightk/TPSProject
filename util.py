@@ -10,7 +10,14 @@ def getyArray():
     return yArray
 
 def readFile():
-    f = open("data\\Random5.tsp")
+
+    # either this one or the other one will work, idk why it changes machine to machine
+
+    #desktop works
+    #f = open("data\\Random4.tsp")
+
+    #laptop works
+    f = open("data/Random12.tsp")
 
     stuf = f.readlines()
 
