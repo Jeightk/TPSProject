@@ -1,6 +1,8 @@
 import math
-
+import time
 import util
+
+startTime = time.time()
 
 #xArray = [87.951292, 33.466597, 91.778314, 20.526749, 9.006012, 20.032350, 77.181310]
 #yArray = [2.658162, 66.682943, 53.807184, 47.633290, 81.185339, 2.761925, 31.922361]
@@ -92,75 +94,58 @@ totalDistance = 0
 
 def recursiveGumbo(PosStart: int):
 
-    #boolean value to check if there is any values that have not been touched
-    anyLeft = False
-
     #a count value to be used when:  there is only one value left to open up the first position to create a hamiltonian
     count = 0
 
     for x in range(len(positions)):
         if positions[x]['touched'] == False:
+                #count how many times available positions we have open
                 count+=1
-                #we found that there are some left, sooo we dont end the recursion
-                anyLeft = True
-
-
-    if anyLeft == False:
-        #none left so we end it
-        print("None left")
-        return 0
-    
-    #if theres one value left that still needs to be 'touched' we go ahead and add our start pos so we can create that loop
-    elif count == 1:
-        #adding out original starting point back into the mix
-        positions[posToStartFrom]['touched'] = False
 
     #finds position that is closest to ours, that also hasnt been 'touched' yet
     var = evalClosestPosition(PosStart)
+    
+    
+    #if theres one value left that still needs to be 'touched' we go ahead and add our start pos so we can create that loop
+    if count == 1:
+        #adding out original starting point back into the mix
+        positions[posToStartFrom]['touched'] = False
+
+
 
     print(PosStart, " to ", var['spot'])
 
 
 
     spot = var['spot']
-    print(var['distance'])
+    #if we revisit the position we started from then we reached the end
+    if spot == posToStartFrom:
+        print("reached the end")
+        return 0
+
+    print("Distance: ",var['distance'])
 
     return recursiveGumbo(spot)+var['distance']
             
-    
-
-
-
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     setPositions()
 
-    #print(positions)
 
     #Goes ahead and sets up the first position
     positions[posToStartFrom]['touched'] = True
     firstPosition = evalClosestPosition(posToStartFrom)
     totalDistance+=firstPosition['distance']
 
+
     #Display where we going to
     print(posToStartFrom, " to ", firstPosition['spot'])
+    print("Distance: ",firstPosition['distance'])
+
 
     #add up total distance recursively
     totalDistance+=recursiveGumbo(firstPosition['spot'])
 
 
     print("Shortest Distance Brute Force : ", totalDistance)
+    print("Run time: ", time.time()-startTime)

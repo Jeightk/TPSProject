@@ -10,7 +10,7 @@ def getyArray():
     return yArray
 
 def readFile():
-    f = open("data\\Random12.tsp")
+    f = open("data\\Random5.tsp")
 
     stuf = f.readlines()
 
